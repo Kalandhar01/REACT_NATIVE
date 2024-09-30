@@ -12,7 +12,7 @@ const Form = ({ title, value, placeholder, handleChangeText, otherStyles }) => {
       <Text className="text-base text-gray-200 font-pmedium">{title}</Text>
 
       {/* Input Container */}
-      <View className="border-2 border-black-200 w-full h-16 bg-black-100 px-4 rounded-2xl items-center flex-row">
+      <View className="border-2 border-black-200 w-full h-16 bg-black-100 px-4 rounded-2xl items-center flex-row focus:border-secondary-200">
         {/* Text Input */}
         <TextInput
           className="flex-1 text-white font-psemibold text-base"
