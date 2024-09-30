@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Button from '../../components/Button';
 import Form from '../../components/Form';
 import { images } from '../../constants';
 
@@ -12,6 +13,19 @@ const SignIn = () => {
 
 
   })
+
+  // const [submitting ,setsubmitting] = useState(false
+
+  // )
+
+
+
+  // const Submit = () => {}
+
+
+
+
+
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView>
@@ -41,7 +55,20 @@ const SignIn = () => {
             otherStyles='mt-7'
           
 
+
           />
+
+          {/* <Button 
+          title = "Sign In"
+          handlePress = {Submit}
+          containerStyles="mt-7"
+          isLoading ={submitting}
+
+          
+          /> */}
+          <Button  />
+
+
         </View>
       </ScrollView>
     </SafeAreaView>
