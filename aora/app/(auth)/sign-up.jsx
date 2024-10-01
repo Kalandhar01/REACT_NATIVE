@@ -1,43 +1,41 @@
+import { Link, router } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Dimensions, Image, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Button from '../../components/Button';
-import Form from '../../components/Form';
 import { images } from '../../constants';
 
-import { Link, router } from 'expo-router';
+import Button from '../../components/Button';
+import Form from '../../components/Form';
 import { createUser } from '../../lib/appwrite';
 
+
 const SignUp = () => {
+  // const { setUser, setIsLogged } = useGlobalContext();
+
+  const [isSubmitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
-    username: '',
-    email: '',
-    password: '',
+    username: "",
+    email: "",
+    password: "",
   });
 
-  const [submitting, setSubmitting] = useState(false);
-
   const submit = async () => {
-    if (!form.username || !form.email || !form.password) {
-      Alert.alert('Error', 'Please Fill All Fields');
-      return; // Exit early if fields are empty
+    if (form.username === "" || form.email === "" || form.password === "") {
+      Alert.alert("Error", "Please fill in all fields");
     }
 
-    setSubmitting(true); // Move this up to just before try
-
+    setSubmitting(true);
     try {
-      const result = await createUser(
-        form.email,
-        form.password,
-        form.username
-      );
-
-      // Set it global state (if applicable)
-
-      router.replace('/home');
+      const result = await createUser(form.email, form.password, form.username);
+      setUser(result);
+      setIsLogged(true);
+      router.replace("/home");
+      
     } catch (error) {
-      Alert.alert("Error", error.message); // Corrected typo here
+      router.replace("/home");
+      Alert.alert("Error", error.message);
     } finally {
+      router.replace("/home");
       setSubmitting(false);
     }
   };
@@ -45,14 +43,24 @@ const SignUp = () => {
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView>
-        <View className="w-full justify-center min-h-[95vh] px-4 my-6">
-          <Image source={images.logo} resizeMode="contain" className="w-[115px] h-[35px]" />
-          <Text className="text-2xl text-white font-semibold bold mt-10 font-psemibold">
-            Sign up With Aura
+        <View
+          className="w-full flex justify-center h-full px-4 my-6"
+          style={{
+            minHeight: Dimensions.get("window").height - 100,
+          }}
+        >
+          <Image
+            source={images.logo}
+            resizeMode="contain"
+            className="w-[115px] h-[34px]"
+          />
+
+          <Text className="text-2xl font-semibold text-white mt-10 font-psemibold">
+            Sign Up to Aora
           </Text>
 
           <Form
-            title="UserName"
+            title="Username"
             value={form.username}
             handleChangeText={(e) => setForm({ ...form, username: e })}
             otherStyles="mt-10"
@@ -77,15 +85,18 @@ const SignUp = () => {
             title="Sign Up"
             handlePress={submit}
             containerStyles="mt-7"
-            textStyles=""
-            isLoading={submitting}
+            isLoading={isSubmitting}
           />
 
-          <View className="justify-center pt-5 flex-row gap-2">
-            <Text className="text-lg text-gray-100 font-pregular">Have An Account Already?</Text>
-
-            <Link href="/sign-in" className="text-lg font-psemibold text-secondary-200">
-              Log In
+          <View className="flex justify-center pt-5 flex-row gap-2">
+            <Text className="text-lg text-gray-100 font-pregular">
+              Have an account already?
+            </Text>
+            <Link
+              href="/sign-in"
+              className="text-lg font-psemibold text-secondary"
+            >
+              Login
             </Link>
           </View>
         </View>
@@ -95,5 +106,3 @@ const SignUp = () => {
 };
 
 export default SignUp;
-
-const styles = StyleSheet.create({});

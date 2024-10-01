@@ -13,14 +13,15 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "package":"com.aura.aura"
     },
     "android": {
-      "package" : "com.kala_aora",
+      "package" : "com.aura.aura",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      } 
     },
     "web": {
       "bundler": "metro",

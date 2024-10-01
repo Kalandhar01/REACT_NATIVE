@@ -1,41 +1,40 @@
 import React, { useState } from 'react';
-import { FlatList, Image, RefreshControl, SafeAreaView, Text, View } from 'react-native';
+import { Alert, FlatList, Image, RefreshControl, SafeAreaView, Text, View } from 'react-native';
 
 import Empty from '../../components/Empty';
 import SearchInput from '../../components/SearchInput';
 import Trending from '../../components/Trending';
+import VideoCard from '../../components/VideoCard'; // Fixed casing to match component name convention
 import { images } from '../../constants';
+import { getAllPosts } from '../../lib/appwrite';
+import useAppwrite from '../../lib/useAppwrite';
 
 const Home = () => {
-  const data = [
-    { id: 1 },
-    { id: 2 },
-    { id: 3 },
-  ];
+  // Using custom hook to fetch posts
+  const { data: posts, isLoading, refetch } = useAppwrite(getAllPosts);
 
+  const [refresh, setRefresh] = useState(false);
 
-  const [refresh , setRefresh] = useState(false);
-  const onRefresh = async () =>{
+  // Pull-to-refresh handler
+  const onRefresh = async () => {
     setRefresh(true);
-    //if any video appeared
-
-    setRefresh(false);
-
-  }
-
+    try {
+      // Refetch data using the custom hook's functionality
+      await refetch();
+    } catch (error) {
+      Alert.alert("Error", error.message || "Failed to refresh data.");
+    } finally {
+      setRefresh(false);
+    }
+  };
 
   return (
     <SafeAreaView className='bg-primary h-full'>
       {/* List of Elements to map */}
       <FlatList
-        data={data} // You can update this to empty array `data={[]}` to test ListEmptyComponent
-        
-        keyExtractor={(item) => item.id.toString()} // Corrected key extractor
-        renderItem={({ item }) => (
-          <Text className="text-3xl text-white my-2 mx-4">
-            {item.id}
-          </Text>
-        )}
+        data={posts || []} // Use posts from the custom hook, fallback to empty array
+        keyExtractor={(item) => item.$id} // Corrected key extractor with fallback
+        renderItem={({ item }) => <VideoCard video={item} />}
         ListHeaderComponent={() => (
           <View className="my-10 px-4 space-y-6">
             <View className="justify-between items-start flex-row mb-6">
@@ -74,10 +73,10 @@ const Home = () => {
 
         // Scroll Adjustment to Enable Scrolling
         contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
-        refreshControl={<RefreshControl refreshing={refresh} onRefresh={onRefresh}/>}
+        refreshControl={<RefreshControl refreshing={refresh} onRefresh={onRefresh} />}
       />
     </SafeAreaView>
   );
-}
+};
 
 export default Home;

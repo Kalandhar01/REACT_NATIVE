@@ -20,32 +20,37 @@ const SignIn = () => {
   const [submitting ,setSubmitting] = useState(false
 
   )
-
-
+  
+  
   const submit = async () => {
-    if (!form.username || !form.email || !form.password) {
-      Alert.alert('Error', 'Please Fill All Fields');
-      return; // Exit early if fields are empty
+    if (!form.email || !form.password ) {
+      Alert.alert('Error', "Please fill All");
     }
-
-    setSubmitting(true); // Move this up to just before try
+    setSubmitting(true);
 
     try {
-      const result = await signIn(
-        form.email,
-        form.password,
-        
-      );
+      await signIn(form.email, form.password )
 
-      // Set it global state (if applicable)
+      //set it to global
 
-      router.replace('/home');
-    } catch (error) {
-      Alert.alert("Error", error.message); // Corrected typo here
-    } finally {
+      router.replace('/home')
+
+    }
+    catch (error) {
+      Alert.alert("Error", error.message);
+    }
+    finally {
       setSubmitting(false);
     }
-  };
+
+
+
+
+  }
+
+
+
+  
 
 
 
