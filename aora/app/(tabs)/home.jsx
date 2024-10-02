@@ -6,12 +6,15 @@ import SearchInput from '../../components/SearchInput';
 import Trending from '../../components/Trending';
 import VideoCard from '../../components/VideoCard'; // Fixed casing to match component name convention
 import { images } from '../../constants';
-import { getAllPosts } from '../../lib/appwrite';
+import { getAllPosts, getLatestPosts } from '../../lib/appwrite';
 import useAppwrite from '../../lib/useAppwrite';
 
 const Home = () => {
   // Using custom hook to fetch posts
   const { data: posts, isLoading, refetch } = useAppwrite(getAllPosts);
+
+
+  const { data: latest} = useAppwrite(getLatestPosts);
 
   const [refresh, setRefresh] = useState(false);
 
@@ -27,6 +30,10 @@ const Home = () => {
       setRefresh(false);
     }
   };
+
+
+
+
 
   return (
     <SafeAreaView className='bg-primary h-full'>
@@ -59,7 +66,7 @@ const Home = () => {
             {/* Latest Video Section */}
             <View className="w-full flex-1 pt-5 pb-3">
               <Text className='text-gray-100 text-lg font-pregular'>Latest Videos</Text>
-              <Trending posts={[{ id: 1 }, { id: 2 }, { id: 3 }]} />
+              <Trending posts={latest ?? [] } />
             </View>
           </View>
         )}
