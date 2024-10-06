@@ -1,14 +1,88 @@
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import React, { useState } from 'react';
+import { Alert, FlatList, Image, RefreshControl, SafeAreaView, Text, View } from 'react-native';
 
-const profile = () => {
+import Empty from '../../components/Empty';
+import VideoCard from '../../components/VideoCard'; // Fixed casing to match component name convention
+import { images } from '../../constants';
+import { getAllPosts, getLatestPosts } from '../../lib/appwrite';
+import useAppwrite from '../../lib/useAppwrite';
+
+const Home = () => {
+  // Using custom hook to fetch posts
+  const { data: posts, isLoading, refetch } = useAppwrite(getAllPosts);
+
+
+  const { data: latest} = useAppwrite(getLatestPosts);
+
+  const [refresh, setRefresh] = useState(false);
+
+  // Pull-to-refresh handler
+  const onRefresh = async () => {
+    setRefresh(true);
+    try {
+      // Refetch data using the custom hook's functionality
+      await refetch();
+    } catch (error) {
+      Alert.alert("Error", error.message || "Failed to refresh data.");
+    } finally {
+      setRefresh(false);
+    }
+  };
+
+
+
+
+
   return (
-    <View>
-      <Text>profile</Text>
-    </View>
-  )
-}
+    <SafeAreaView className='bg-primary h-full'>
+      {/* List of Elements to map */}
+      <FlatList
+        data={posts || []} // Use posts from the custom hook, fallback to empty array
+        keyExtractor={(item) => item.$id} // Corrected key extractor with fallback
+        renderItem={({ item }) => <VideoCard video={item} />}
+        ListHeaderComponent={() => (
+          <View className="my-12 px-4 space-y-6">
+            <View className="justify-between items-start flex-row mb-6">
+              {/* Left Text Back */}
+              <View>
+                <Text className="font-pmedium text-sm text-gray-100">Profile</Text>
+                <Text className="text-2xl font-psemibold text-white">Kalandhar</Text>
+              </View>
 
-export default profile
+              {/* Right Image */}
+              <View className='mt-1.5'>
+                <Image
+                  className='w-9 h-10'
+                  source={images.logoSmall}
+                  resizeMode='contain'
+                />
+              </View>
+            </View>
 
-const styles = StyleSheet.create({})
+            
+
+           < Text className="text-2xl font-psemibold text-white">Your Posts</Text>
+          </View>
+        )}
+
+       
+        ListEmptyComponent={() => (
+          <>
+          
+          
+          <Empty 
+            title="No videos Found"
+            subtitle="Be the first one to upload a video"
+          />
+          </>
+        )}
+
+        // Scroll Adjustment to Enable Scrolling
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
+        refreshControl={<RefreshControl refreshing={refresh} onRefresh={onRefresh} />}
+      />
+    </SafeAreaView>
+  );
+};
+
+export default Home;
